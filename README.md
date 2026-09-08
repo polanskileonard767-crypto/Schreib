@@ -1,35 +1,36 @@
-# Schreib ✍️
+# Schreib
 
-Ein lokaler Handschrift-Font-Generator für Browser und Tablet.
+**Schreib** ist ein browserbasierter Handschrift-Font-Generator. Du zeichnest deine eigenen Zeichen mit S Pen, Finger oder Maus und kannst daraus direkt einen OTF-Font erzeugen.
 
-## Erster funktionierender Stand
+## Was jetzt drin ist
 
-- Zeichen mit Finger, Maus oder Stylus direkt auf einer Canvas-Fläche schreiben
-- bis zu drei Varianten pro Zeichen speichern
-- Dataset im Browser über `localStorage` sichern
-- Dataset als JSON exportieren und wieder importieren
-- aus den gespeicherten Glyphen direkt im Browser einen OTF-Font bauen
-- eine Live-Vorschau mit dem erzeugten Font anzeigen
+- 81 Zeichen: A–Z, a–z, 0–9, deutsche Sonderzeichen und Satzzeichen
+- 3 Varianten pro Zeichen
+- S Pen, Finger und Maus über Pointer Events
+- Druckstärke wird bei kompatiblen Stiften als Strichstärke übernommen
+- Undo / Redo und Löschen
+- automatische lokale Speicherung im Browser
+- direkte Live-Vorschau des aktuellen Textes
+- fehlende Glyphen werden klar markiert statt still versteckt
+- OTF-Export über OpenType.js
+- hochauflösender PNG-Export
+- Drucken / Als PDF speichern
+- Dataset als JSON importieren/exportieren
+- Reset-Funktion
 - responsive Oberfläche für Smartphone, Tablet und Desktop
 
-## Start
+## Wie die Handschrift technisch funktioniert
 
-Das Projekt ist ohne Build-System angelegt. `index.html` kann als statische Website ausgeliefert werden, zum Beispiel über GitHub Pages.
+Die Schreibfläche speichert jeden Strich als Punktfolge mit `x`, `y` und `w` (Strichbreite). Beim Export werden diese Striche in gefüllte Konturen umgerechnet und als OpenType-Glyphen in einen Font geschrieben.
 
-Die Font-Erzeugung verwendet OpenType.js 2.0.0 im Browser. OpenType.js unterstützt das Erstellen eines Fonts aus eigenen Glyph-Pfaden und das Exportieren als ArrayBuffer/Font-Datei. Die aktuelle Implementierung nutzt daraus eine lokale, browserbasierte Pipeline.
+Die Live-Vorschau baut den Font im Browser auf und rendert jede vorhandene Glyphe über OpenType.js. Zeichen, die noch nicht erfasst wurden, bleiben als neutrale Systemschrift sichtbar und werden unter der Vorschau aufgelistet.
+
+Die OpenType.js-Dokumentation beschreibt sowohl das Erzeugen eigener Glyphenpfade als auch das Schreiben einer Font-Datei im Browser. citeturn982449search0turn301558search1
 
 ## Datenschutz
 
-Die Handschrift bleibt standardmäßig im Browser. Erst beim Dataset-Export wird eine JSON-Datei erzeugt, die der Nutzer selbst speichert.
+Die Handschrift-Daten werden standardmäßig nur im `localStorage` des Browsers gespeichert. Ein Dataset verlässt den Browser erst, wenn du es selbst als JSON exportierst oder eine Datei herunterlädst.
 
-## Aktuelle Grenzen
+## Start
 
-Die erste Version wandelt die erfassten Mittellinien in einfache geschlossene Strichkonturen um. Für eine besonders natürliche Handschrift kommen als nächste Ausbaustufen bessere Kurven-Glättung, rundere Kappen und OpenType-Alternativen hinzu.
-
-## Nächste Ausbaustufen
-
-1. bessere Glättung und Kontur-Erzeugung für handschriftliche Striche
-2. automatische Ausrichtung an Grundlinie und Mittellinie
-3. echte OpenType-Alternativen für mehrere Buchstabenvarianten
-4. PNG/PDF-Export für Notiz-Apps
-5. Installations-/PWA-Modus für Tablet und Smartphone
+Die Seite ist als statische GitHub-Pages-App aufgebaut. `index.html` liegt direkt im Repository-Root. Für den Font-Export wird OpenType.js als Browser-CDN eingebunden.
