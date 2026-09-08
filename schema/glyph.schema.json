@@ -1,19 +1,53 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Schreib Glyph",
+  "title": "Schreib Handwriting Dataset",
   "type": "object",
-  "required": ["character", "variants"],
+  "required": ["version", "fontName", "glyphs"],
   "properties": {
-    "character": { "type": "string", "minLength": 1 },
-    "variants": {
-      "type": "array",
-      "items": {
+    "version": { "type": "integer", "const": 2 },
+    "fontName": { "type": "string", "minLength": 1, "maxLength": 32 },
+    "exportedAt": { "type": "string" },
+    "glyphs": {
+      "type": "object",
+      "additionalProperties": {
         "type": "object",
-        "required": ["id", "paths"],
+        "required": ["char", "variants"],
         "properties": {
-          "id": { "type": "string" },
-          "paths": { "type": "array", "items": { "type": "string" } },
-          "advanceWidth": { "type": "number" }
+          "char": { "type": "string", "minLength": 1, "maxLength": 2 },
+          "variants": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "anyOf": [
+                { "type": "null" },
+                {
+                  "type": "object",
+                  "required": ["strokes", "width", "height", "baseline"],
+                  "properties": {
+                    "width": { "type": "number", "minimum": 1 },
+                    "height": { "type": "number", "minimum": 1 },
+                    "baseline": { "type": "number" },
+                    "strokes": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["x", "y", "w"],
+                          "properties": {
+                            "x": { "type": "number" },
+                            "y": { "type": "number" },
+                            "w": { "type": "number", "minimum": 0 }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
         }
       }
     }
