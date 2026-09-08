@@ -1,105 +1,107 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f6f7fb">
-  <meta name="description" content="Schreib – eigener Handschrift-Font im Browser erstellen.">
-  <title>Schreib – Handschrift-Font-Generator</title>
+  <meta name="theme-color" content="#f4f1ea">
+  <meta name="description" content="Schreib – deine Handschrift als echte Schriftart.">
+  <title>Schreib – Handschrift-Studio</title>
+  <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><span class="brand-mark">S</span><div><strong>Schreib</strong><small>Deine Schrift. Dein Font.</small></div></div>
+    <a class="brand" href="./" aria-label="Schreib Startseite">
+      <span class="brand-mark">S</span>
+      <span><strong>Schreib</strong><small>Deine Schrift. Dein Font.</small></span>
+    </a>
     <div class="top-actions">
-      <button class="ghost" id="importBtn">Import</button>
-      <button class="primary" id="exportJsonBtn">Dataset exportieren</button>
-      <input id="importFile" type="file" accept="application/json,.json" hidden>
+      <button class="btn subtle" id="resetBtn" type="button">Zurücksetzen</button>
+      <button class="btn subtle" id="importBtn" type="button">Dataset importieren</button>
+      <button class="btn primary" id="exportDatasetBtn" type="button">Dataset exportieren</button>
+      <input id="importInput" type="file" accept=".json,application/json" hidden>
     </div>
   </header>
 
-  <main class="shell">
-    <section class="hero">
-      <div>
+  <main class="app-shell">
+    <section class="intro">
+      <div class="intro-copy">
         <p class="eyebrow">HANDSCHRIFT STUDIO</p>
-        <h1>Deine Handschrift als echte Schriftart.</h1>
-        <p class="hero-copy">Schreibe Zeichen mit Stift, Finger oder Maus. Die Daten bleiben in deinem Browser, bis du sie exportierst.</p>
+        <h1>Mach aus deiner Handschrift eine echte Schriftart.</h1>
+        <p>Schreibe Zeichen mit S Pen, Finger oder Maus. Alles wird lokal im Browser gespeichert. Aus den Glyphen erzeugt Schreib direkt einen OTF-Font.</p>
       </div>
-      <div class="status-card">
-        <span id="progressText">0 % erfasst</span>
-        <div class="progress"><span id="progressBar"></span></div>
-        <small id="capturedCount">0 / 84 Zeichen</small>
+      <div class="progress-card">
+        <div class="progress-top"><strong id="progressText">0 %</strong><span id="capturedCount">0 / 84 Zeichen</span></div>
+        <div class="progress-track"><span id="progressBar"></span></div>
+        <span class="muted" id="progressHint">Starte mit dem A.</span>
       </div>
     </section>
 
-    <section class="panel">
+    <section class="panel capture-panel">
       <div class="panel-head">
         <div>
-          <h2>1. Zeichen erfassen</h2>
-          <p>Ein Zeichen pro Feld. Mehrere Varianten kannst du später ergänzen.</p>
+          <p class="eyebrow">01 · DEINE GLYPHEN</p>
+          <h2>Zeichen erfassen</h2>
+          <p>Ein Zeichen pro Feld. Drei Varianten sind möglich, damit deine Handschrift später natürlicher wirkt.</p>
         </div>
-        <div class="variant-control">
-          <label for="variantSelect">Variante</label>
-          <select id="variantSelect">
-            <option value="0">1</option>
-            <option value="1">2</option>
-            <option value="2">3</option>
-          </select>
+        <div class="font-settings">
+          <label>Fontname<input id="fontName" maxlength="32" value="MeineHandschrift" autocomplete="off"></label>
+          <label>Strich<span class="range-row"><input id="strokeWidth" type="range" min="0.65" max="1.8" step="0.05" value="1"><output id="strokeWidthValue">1.00×</output></span></label>
         </div>
       </div>
-      <div class="char-groups" id="charGroups"></div>
+      <div id="charGroups" class="char-groups"></div>
     </section>
 
-    <section class="workbench panel">
-      <div class="canvas-column">
+    <section class="workspace-grid">
+      <section class="panel writing-panel">
         <div class="panel-head compact">
-          <div>
-            <p class="eyebrow">AKTUELLES ZEICHEN</p>
-            <h2 id="currentCharLabel">A</h2>
-          </div>
-          <div class="canvas-actions">
-            <button class="ghost" id="undoBtn">Rückgängig</button>
-            <button class="ghost" id="clearBtn">Löschen</button>
-          </div>
+          <div><p class="eyebrow">02 · SCHREIBEN</p><div class="current-line"><h2 id="currentCharLabel">A</h2><span id="variantBadge" class="variant-badge">Variante 1</span></div></div>
+          <div class="action-row"><button class="btn subtle" id="undoBtn" type="button">↶</button><button class="btn subtle" id="redoBtn" type="button">↷</button><button class="btn subtle" id="clearBtn" type="button">Löschen</button></div>
         </div>
-        <div class="writing-wrap">
-          <canvas id="writingCanvas" width="900" height="450" aria-label="Schreibfläche"></canvas>
-          <div class="guides" aria-hidden="true">
-            <div class="guide ascent"></div>
-            <div class="guide baseline"></div>
-            <div class="guide descent"></div>
-          </div>
-        </div>
-        <div class="canvas-help">
-          <span>✍️ Stift/Finger ziehen</span>
-          <span>•</span>
-          <span>Dicke folgt bei unterstützten Stiften dem Druck</span>
-        </div>
-        <button class="save-character" id="saveCharacterBtn">Zeichen speichern</button>
-      </div>
 
-      <div class="preview-column">
+        <div class="writing-stage">
+          <canvas id="writingCanvas" width="1200" height="600" aria-label="Schreibfläche"></canvas>
+          <div class="guide-line guide-top"></div><div class="guide-line guide-xheight"></div><div class="guide-line guide-baseline"></div><div class="guide-line guide-bottom"></div>
+          <div class="guide-label guide-label-top">Oberkante</div><div class="guide-label guide-label-baseline">Grundlinie</div><div class="guide-label guide-label-bottom">Unterlänge</div>
+          <div class="writing-empty" id="writingEmpty"><strong id="writingPrompt">Schreib dein A hier</strong><span>Stift, Finger oder Maus funktioniert.</span></div>
+        </div>
+
+        <div class="writing-toolbar">
+          <span id="autosaveState" class="status-pill">Automatisch gespeichert</span>
+          <span class="toolbar-tip">Tipp: Schreibe groß genug und halte die Grundlinie ungefähr ein.</span>
+          <button class="btn primary" id="saveGlyphBtn" type="button">Zeichen speichern ✓</button>
+          <button class="btn subtle next-btn" id="nextGlyphBtn" type="button">Nächstes →</button>
+        </div>
+      </section>
+
+      <section class="panel preview-panel">
         <div class="panel-head compact">
-          <div>
-            <p class="eyebrow">LIVE-VORSCHAU</p>
-            <h2>Text</h2>
-          </div>
-          <button class="ghost" id="fontDownloadBtn">OTF erstellen</button>
+          <div><p class="eyebrow">03 · LIVE-VORSCHAU</p><h2>Dein Text</h2></div>
+          <span id="previewStatus" class="status-pill">Noch keine Glyphen</span>
         </div>
-        <textarea id="previewText" rows="6">Hallo! Das ist meine Handschrift.</textarea>
-        <div class="preview-box" id="previewBox">Hallo! Das ist meine Handschrift.</div>
-        <div class="font-meta">
-          <label>Fontname <input id="fontName" maxlength="32" value="MeineHandschrift"></label>
-          <label>Strichstärke <input id="strokeWidth" type="range" min="1.5" max="8" step="0.1" value="3.4"><output id="strokeWidthValue">3.4</output></label>
-        </div>
-        <p class="note">Die OTF-Datei nutzt aktuell die erste gespeicherte Variante jedes Zeichens. Varianten werden im Dataset mitgespeichert.</p>
+
+        <label class="text-label" for="previewText">Text eingeben</label>
+        <textarea id="previewText" rows="5" spellcheck="false">Hallo! Das ist meine Handschrift.</textarea>
+        <div class="preview-stage"><canvas id="previewCanvas" width="1400" height="560" aria-label="Vorschau deiner Handschrift"></canvas></div>
+
+        <div class="missing-card" id="missingCard" hidden><strong>Noch fehlende Zeichen</strong><span id="missingChars"></span></div>
+        <div class="preview-actions"><button class="btn primary" id="downloadOtfBtn" type="button">OTF herunterladen</button><button class="btn subtle" id="downloadPngBtn" type="button">PNG exportieren</button><button class="btn subtle" id="printBtn" type="button">Drucken / PDF</button></div>
+        <div class="mini-info"><div><strong id="glyphInfo">0</strong><span>erfasste Zeichen</span></div><div><strong id="variantInfo">0</strong><span>Varianten</span></div><div><strong id="fontReadyInfo">Nein</strong><span>Font bereit</span></div></div>
+      </section>
+    </section>
+
+    <section class="panel how-panel">
+      <div><p class="eyebrow">04 · WORKFLOW</p><h2>So wird daraus deine Schrift</h2></div>
+      <div class="workflow">
+        <div><span>1</span><strong>Schreiben</strong><small>Glyph mit Stift/Finger erfassen.</small></div>
+        <div><span>2</span><strong>Normalisieren</strong><small>Position, Größe und Strich werden sauber umgerechnet.</small></div>
+        <div><span>3</span><strong>Font bauen</strong><small>Die Glyphen werden als echte Font-Konturen zusammengesetzt.</small></div>
+        <div><span>4</span><strong>Export</strong><small>OTF, PNG oder Druck/PDF für Star Notes.</small></div>
       </div>
     </section>
   </main>
-
-  <footer class="footer">Schreib • lokaler Handschrift-Datensatz • keine Anmeldung nötig</footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/opentype.js@2.0.0/dist/opentype.js"></script>
-  <script type="module" src="./app.js"></script>
+  <footer class="footer">Schreib · lokal im Browser · keine Anmeldung nötig</footer>
+  <script defer src="https://opentype.js.org/dist/opentype.min.js"></script>
+  <script defer src="./app.js"></script>
 </body>
 </html>
