@@ -316,12 +316,7 @@ function buildFont() {
   notdefPath.closePath();
   const glyphs = [new opentype.Glyph({ name: '.notdef', advanceWidth: 650, path: notdefPath })];
 
-  glyphs.push(new opentype.Glyph({
-    name: 'space',
-    unicode: 32,
-    advanceWidth: 280,
-    path: new opentype.Path()
-  }));
+  glyphs.push(new opentype.Glyph({ name: 'space', unicode: 32, advanceWidth: 280, path: new opentype.Path() }));
 
   for (const ch of allChars) {
     const data = dataset.glyphs[ch]?.variants?.find(variant => variant?.strokes?.length);
