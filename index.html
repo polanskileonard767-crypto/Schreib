@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f7fb">
+  <meta name="description" content="Schreib – eigener Handschrift-Font im Browser erstellen.">
+  <title>Schreib – Handschrift-Font-Generator</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">S</span><div><strong>Schreib</strong><small>Deine Schrift. Dein Font.</small></div></div>
+    <div class="top-actions">
+      <button class="ghost" id="importBtn">Import</button>
+      <button class="primary" id="exportJsonBtn">Dataset exportieren</button>
+      <input id="importFile" type="file" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">HANDSCHRIFT STUDIO</p>
+        <h1>Deine Handschrift als echte Schriftart.</h1>
+        <p class="hero-copy">Schreibe Zeichen mit Stift, Finger oder Maus. Die Daten bleiben in deinem Browser, bis du sie exportierst.</p>
+      </div>
+      <div class="status-card">
+        <span id="progressText">0 % erfasst</span>
+        <div class="progress"><span id="progressBar"></span></div>
+        <small id="capturedCount">0 / 84 Zeichen</small>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>1. Zeichen erfassen</h2>
+          <p>Ein Zeichen pro Feld. Mehrere Varianten kannst du später ergänzen.</p>
+        </div>
+        <div class="variant-control">
+          <label for="variantSelect">Variante</label>
+          <select id="variantSelect">
+            <option value="0">1</option>
+            <option value="1">2</option>
+            <option value="2">3</option>
+          </select>
+        </div>
+      </div>
+      <div class="char-groups" id="charGroups"></div>
+    </section>
+
+    <section class="workbench panel">
+      <div class="canvas-column">
+        <div class="panel-head compact">
+          <div>
+            <p class="eyebrow">AKTUELLES ZEICHEN</p>
+            <h2 id="currentCharLabel">A</h2>
+          </div>
+          <div class="canvas-actions">
+            <button class="ghost" id="undoBtn">Rückgängig</button>
+            <button class="ghost" id="clearBtn">Löschen</button>
+          </div>
+        </div>
+        <div class="writing-wrap">
+          <canvas id="writingCanvas" width="900" height="450" aria-label="Schreibfläche"></canvas>
+          <div class="guides" aria-hidden="true">
+            <div class="guide ascent"></div>
+            <div class="guide baseline"></div>
+            <div class="guide descent"></div>
+          </div>
+        </div>
+        <div class="canvas-help">
+          <span>✍️ Stift/Finger ziehen</span>
+          <span>•</span>
+          <span>Dicke folgt bei unterstützten Stiften dem Druck</span>
+        </div>
+        <button class="save-character" id="saveCharacterBtn">Zeichen speichern</button>
+      </div>
+
+      <div class="preview-column">
+        <div class="panel-head compact">
+          <div>
+            <p class="eyebrow">LIVE-VORSCHAU</p>
+            <h2>Text</h2>
+          </div>
+          <button class="ghost" id="fontDownloadBtn">OTF erstellen</button>
+        </div>
+        <textarea id="previewText" rows="6">Hallo! Das ist meine Handschrift.</textarea>
+        <div class="preview-box" id="previewBox">Hallo! Das ist meine Handschrift.</div>
+        <div class="font-meta">
+          <label>Fontname <input id="fontName" maxlength="32" value="MeineHandschrift"></label>
+          <label>Strichstärke <input id="strokeWidth" type="range" min="1.5" max="8" step="0.1" value="3.4"><output id="strokeWidthValue">3.4</output></label>
+        </div>
+        <p class="note">Die OTF-Datei nutzt aktuell die erste gespeicherte Variante jedes Zeichens. Varianten werden im Dataset mitgespeichert.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">Schreib • lokaler Handschrift-Datensatz • keine Anmeldung nötig</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/opentype.js@2.0.0/dist/opentype.js"></script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
